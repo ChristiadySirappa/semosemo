@@ -1,5 +1,5 @@
-import React,{useState} from 'react'
 import { View, Text, StyleSheet, Image, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
+import React from 'react'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
 import BottomSheet from '@gorhom/bottom-sheet'
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     },
 })
 
-const SignUp = ({navigation}) => {
+const SignUpAdmin = ({navigation}) => {
     const bottomSheetRef = React.useRef(null)
     const snapPoints = React.useMemo(() => ['50%'], [])
     const [datePickerSheetVisible, setDatePickerSheetVisible] = React.useState(-1)
@@ -160,12 +160,12 @@ const SignUp = ({navigation}) => {
                 fullName: namaLengkap,
                 birthDate: tanggalLahir.toISOString(),
                 nomorTelepon: nomorTelepon,
-                userType: 'user',
+                userType: 'rental',
                 image:photoBase64
             })
 
             alert("Akun berhasil dibuat")
-            navigation.goBack()
+            navigation.navigate('SignIn')
 
             //clear all forms
             setNamaLengkap('')
@@ -190,7 +190,7 @@ const SignUp = ({navigation}) => {
                 <TouchableOpacity onPress={() => navigation.pop()} activeOpacity={0.8}>
                     <Image source={require('../../assets/ArrowLeft.png')}/>
                 </TouchableOpacity>
-                <Text style={{fontSize: 32, color: 'white',marginLeft:10}}>Registration</Text>
+                <Text style={{fontSize: 32, color: 'white',marginLeft:10}}>Registration Admin</Text>
             </View>
             <TouchableOpacity style={{marginTop:30}} onPress={imageGallery} activeOpacity={0.5}>
               {!hasPhoto && (
@@ -204,7 +204,6 @@ const SignUp = ({navigation}) => {
             </TouchableOpacity>
             {/* main form */}
             <View style={styles.textInputWrapper}>
-
                 <TextInput  placeholder='Name'
                             value={namaLengkap}
                             setValue={setNamaLengkap}
@@ -256,11 +255,6 @@ const SignUp = ({navigation}) => {
                     <Text style={[styles.buttonText, {color: 'white'}]}>Register</Text>
                 </Button>
             </View>
-            <View style={[styles.loginBtn,{marginTop:30}]}>
-                <Button bgColor='#DD8A00' onPress={()=>navigation.navigate('SignUpAdmin')}>
-                    <Text style={[styles.buttonText, {color: '#fff'}]}>Register as Admin</Text>
-                </Button>
-            </View>
         </ScrollView>
         <BottomSheet    ref={bottomSheetRef}
                         index={datePickerSheetVisible}
@@ -280,4 +274,4 @@ const SignUp = ({navigation}) => {
     )
 }
 
-export default SignUp
+export default SignUpAdmin

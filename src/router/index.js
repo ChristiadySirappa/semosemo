@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import SplashScreen from '../pages/SplashScreen'
 import SignIn from '../pages/SignIn'
 import SignUp from '../pages/SignUp'
+import SignUpAdmin from '../pages/SignUpAdmin'
 import Home from '../pages/Home'
 import VehicleSelectContainer from '../pages/VehicleSelect'
 import EditProfile from '../pages/EditProfile'
@@ -21,6 +22,7 @@ const Router = () => {
             <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
             <Stack.Screen name="SignIn" component={SignIn} options={{headerShown: false}}/>
             <Stack.Screen name="SignUp" component={SignUp} options={{headerShown: false}}/>
+            <Stack.Screen name="SignUpAdmin" component={SignUpAdmin} options={{headerShown: false}}/>
             <Stack.Screen name="VehicleSelect" component={VehicleSelectContainer} options={{headerShown: false}}/>
             <Stack.Screen name="EditProfile" component={EditProfile} options={{headerShown: false}}/>
             <Stack.Screen name="VehicleDetail" component={VehicleDetail} options={{headerShown: false}}/>

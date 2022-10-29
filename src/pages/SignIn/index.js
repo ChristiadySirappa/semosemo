@@ -56,7 +56,7 @@ const SignIn = ({navigation}) => {
                 alert("Email tidak boleh kosong!")
                 return
             }
-    
+
             if(password.length < 1) {
                 alert("Password tidak boleh kosong!")
                 return
@@ -104,7 +104,7 @@ const SignIn = ({navigation}) => {
                     alert("Too many failed logins!")
                 else
                     alert("Email/Password incorrect!")
-                
+
                 return
             }
 
@@ -138,23 +138,13 @@ const SignIn = ({navigation}) => {
                                     isPassword={true}
                                     //validation if the input is empty
                                     validation={e => e.length === 0 ? 'Password tidak boleh kosong' : ''}
-                        /> 
+                        />
                     </View>
                     <View style={styles.loginBtn}>
                         <Button text='Sign In' bgColor='#FF8A00' textColor='white' onPress={loginHandler}>
                             <Text style={[styles.buttonText, {color: 'white'}]}>Sign In</Text>
                         </Button>
                     </View>
-                    {/* <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: 250, height: 30}}>
-                        <View style={{height: 1, backgroundColor: 'rgba(0,0,0,0.5)', flex: 1, marginHorizontal: 10}}><Text>a</Text></View>
-                        <Text>Or With</Text>
-                        <View style={{height: 1, backgroundColor: 'rgba(0,0,0,0.5)', flex: 1, marginHorizontal: 10}}><Text>a</Text></View>
-                    </View>
-                    <View style={[styles.loginBtn, {marginBottom: 15}]}>
-                        <Button text='Sign Up with Google' bgColor='white' borderStyle={{color: '#FF8A00', width: 2}} textColor='black' onPress={() => alert("duarr")}>
-                            <Text style={[styles.buttonText, {color: 'black'}]}>Sign up with Google</Text>
-                        </Button>
-                    </View> */}
                     <Text style={{color: 'black'}}>Don't have an account yet? <Text style={{fontWeight: 'bold', color: '#FF8A00'}} onPress={() => navigation.navigate('SignUp')}>Register</Text></Text>
                 </View>
             </ScrollView>

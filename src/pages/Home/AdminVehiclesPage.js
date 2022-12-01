@@ -1,7 +1,7 @@
 /* eslint-disable */
 import {View, Text, Image, ScrollView, TouchableOpacity, Keyboard} from 'react-native'
 import {Menu, Button, AnimatedFAB, TextInput} from 'react-native-paper'
-import React from 'react'
+import React,{useContext,useRef,useState,useEffect} from 'react'
 import CarImage from '../../assets/CarImage.png'
 import MotorcycleImage from '../../assets/MotorcycleImage.png'
 import {getDatabase, ref, get, child, push, remove, update} from 'firebase/database'
@@ -9,25 +9,26 @@ import app from '../../config'
 import BottomSheet from '@gorhom/bottom-sheet'
 import {ScrollView as ScrollViewRNGH} from 'react-native-gesture-handler'
 import ArrowLeft from '../../assets/ArrowLeft.png'
+import BackendDataContext from '../../contexts/backendDataContext'
 
 const db = getDatabase(app)
 const dbRef = ref(db)
 
 const EditVehicleSheet = ({vehicleData, setSelectedVehicle, updateData, deleteData}) => {
     //name, power, seats (for type 'Car'), engine
-    const [vehicleName, setVehicleName] = React.useState('')
-    const [vehiclePower, setVehiclePower] = React.useState('')
-    const [vehicleSeats, setVehicleSeats] = React.useState('')
-    const [vehicleEngine, setVehicleEngine] = React.useState('')
-    const [vehicleType, setVehicleType] = React.useState('Motorcycle')
-    const [vehicleRentPrice, setVehicleRentPrice] = React.useState('')
-    const [vehiclePlateNumber, setVehiclePlateNumber] = React.useState('')
-    const [vehicleDriverPrice, setVehicleDriverPrice] = React.useState('')
+    const [vehicleName, setVehicleName] = useState('')
+    const [vehiclePower, setVehiclePower] = useState('')
+    const [vehicleSeats, setVehicleSeats] = useState('')
+    const [vehicleEngine, setVehicleEngine] = useState('')
+    const [vehicleType, setVehicleType] = useState('Motorcycle')
+    const [vehicleRentPrice, setVehicleRentPrice] = useState('')
+    const [vehiclePlateNumber, setVehiclePlateNumber] = useState('')
+    const [vehicleDriverPrice, setVehicleDriverPrice] = useState('')
 
-    const [menuVisible, setMenuVisible] = React.useState(false)
-    const [bottomBarDisplay, setBottomBarDisplay] = React.useState(null)
+    const [menuVisible, setMenuVisible] = useState(false)
+    const [bottomBarDisplay, setBottomBarDisplay] = useState(null)
 
-    React.useEffect(() => {
+    useEffect(() => {
         console.log(vehicleData)
 
         setVehicleName(vehicleData?.name)
@@ -40,7 +41,7 @@ const EditVehicleSheet = ({vehicleData, setSelectedVehicle, updateData, deleteDa
         setVehicleDriverPrice(vehicleData?.driverPrice)
     }, [vehicleData])
 
-    React.useEffect(() => {
+    useEffect(() => {
         const hideActionBar = () => setBottomBarDisplay('none')
         const showActionBar = () => setBottomBarDisplay(null)
 
@@ -262,10 +263,11 @@ const EditVehicleSheet = ({vehicleData, setSelectedVehicle, updateData, deleteDa
 }
 
 const AdminVehiclesPage = ({navigation}) => {
-    const [vehiclesList, setVehiclesList] = React.useState([])
-    const bottomSheetRef = React.useRef(null)
-    const [bottomSheetVisible, setBottomSheetVisible] = React.useState(false)
-    const [selectedVehicle, setSelectedVehicle] = React.useState(null)
+    const [vehiclesList, setVehiclesList] = useState([])
+    const bottomSheetRef = useRef(null)
+    const [bottomSheetVisible, setBottomSheetVisible] = useState(false)
+    const [selectedVehicle, setSelectedVehicle] = useState(null)
+    const backendDataContext = useContext(BackendDataContext)
 
     const fetchData = async () => {
         try {
@@ -313,7 +315,7 @@ const AdminVehiclesPage = ({navigation}) => {
         }
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         bottomSheetVisible ? bottomSheetRef?.current?.expand() : bottomSheetRef?.current?.close()
 
         const timeout = setInterval(() => !bottomSheetVisible && bottomSheetRef?.current?.close(), 1000)
@@ -321,17 +323,17 @@ const AdminVehiclesPage = ({navigation}) => {
         return () => clearInterval(timeout)
     }, [bottomSheetVisible])
 
-    React.useEffect(() => {
+    useEffect(() => {
         selectedVehicle !== null ? setBottomSheetVisible(true) : setBottomSheetVisible(false)
     }, [selectedVehicle])
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchData()
 
         bottomSheetRef?.current?.close()
     }, [])
 
-    React.useEffect(() => {
+    useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => fetchData())
 
         return unsubscribe
@@ -348,6 +350,7 @@ const AdminVehiclesPage = ({navigation}) => {
             <ScrollView>
                 {
                     vehiclesList.map((el, idx) => (
+                      el.rentalInfo.id == backendDataContext.backendData.id ?
                         <TouchableOpacity
                             key={idx}
                             style={{
@@ -391,29 +394,29 @@ const AdminVehiclesPage = ({navigation}) => {
                                                 name: 'Driver Rent Price',
                                                 value: `Rp. ${el?.driverPrice}`
                                             },
-                                        ].map((elem, idx) => (
+                                        ].map((item, idx) => (
                                             <View
                                                 key={idx}
                                                 style={{
                                                     flexDirection: 'row',
                                                     alignItems: 'center',
                                                     justifyContent: 'space-between',
-                                                    display: elem.name === 'Capacity' && el.type === 'Motorcycle' ? 'none' : null,
+                                                    display: item.name === 'Capacity' && el.type === 'Motorcycle' ? 'none' : null,
                                                 }}
                                             >
-                                                <Text style={{color: 'black'}}>{elem.name}</Text>
+                                                <Text style={{color: 'black'}}>{item.name}</Text>
                                                 <Text style={{color: 'black'}}>:</Text>
-                                                <Text style={{color: 'black'}}>{elem.value}</Text>
+                                              <Text style={{color: 'black'}}>{item.value}</Text>
                                             </View>
                                         ))
                                     }
                                 </View>
                                 <View style={{flex: 0.5}}>
-                                    <Image source={el.type === 'Car' ? CarImage : MotorcycleImage}
+                                    <Image source={{uri:`data:image/png;base64,${el?.vehicleImage}`}}
                                            style={{flex: 1, width: null, height: 100, resizeMode: 'contain'}}/>
                                 </View>
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity> : null
                     ))
                 }
                 <View style={{height: 50}}></View>

@@ -13,6 +13,7 @@ import BookSuccess from '../pages/SuccessPages/BookSuccess'
 import AdminAddVehicle from '../pages/AdminAddVehicle'
 import ScanKTP from '../pages/ScanKTP'
 import LocationSelect from '../pages/LocationSelect'
+import Maps from '../pages/Maps'
 const Stack = createStackNavigator()
 
 const Router = () => {
@@ -31,6 +32,7 @@ const Router = () => {
             <Stack.Screen name="AdminAddVehicle" component={AdminAddVehicle} options={{headerShown: false}}/>
             <Stack.Screen name="ScanKTP" component={ScanKTP} options={{headerShown: false}}/>
             <Stack.Screen name="LocationSelect" component={LocationSelect} options={{headerShown: false}}/>
+            <Stack.Screen name="Maps" component={Maps} options={{headerShown: false}}/>
         </Stack.Navigator>
     )
 }

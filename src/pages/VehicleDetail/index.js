@@ -39,31 +39,6 @@ const LocationSheet = ({selectedLocation, setSelectedLocation, confirmHandler, r
                     color: 'black',
                 }}>Choose Pick Up Location</Text>
 
-                {/*<View style={{*/}
-                {/*    borderRadius: 15,*/}
-                {/*    backgroundColor: 'rgba(0, 0, 0, 0.05)',*/}
-                {/*    marginHorizontal: 10,*/}
-                {/*    flexDirection: 'row',*/}
-                {/*    alignItems: 'center',*/}
-                {/*    marginTop: 15,*/}
-                {/*}}>*/}
-                {/*    <TextInput*/}
-                {/*        style={{*/}
-                {/*            flex: 1,*/}
-                {/*            marginLeft: 15*/}
-                {/*        }}*/}
-                {/*    />*/}
-                {/*    <TouchableOpacity*/}
-                {/*        style={{*/}
-                {/*            paddingHorizontal: 25,*/}
-                {/*            height: 47,*/}
-                {/*            justifyContent: 'center',*/}
-                {/*            // backgroundColor: 'red'*/}
-                {/*        }}*/}
-                {/*    >*/}
-                {/*        <Image source={SearchIcon}/>*/}
-                {/*    </TouchableOpacity>*/}
-                {/*</View>*/}
 
                 <View style={{
                     flexDirection: 'row',
@@ -81,7 +56,7 @@ const LocationSheet = ({selectedLocation, setSelectedLocation, confirmHandler, r
                         }}>{selectedLocation !== undefined ? selectedLocation?.name : 'Please select a location'}</Text>
                     </View>
                     <Button borderStyle={{color: 'rgba(0,0,0,0.1)', width: 1, radius: 15}}
-                            onPress={() => navigation.navigate('LocationSelect', {type: route?.params?.type})}>
+                            onPress={() => navigation.navigate("Maps")}>
                         <Text style={{
                             padding: 10,
                             paddingHorizontal: 15,
@@ -196,7 +171,7 @@ const DurationSheet = ({selectedDuration, setSelectedDuration, confirmHandler, r
         <>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <ScrollPicker
-                    dataSource={[[1, '1 Day'], [2, '2 Day'], [3, '3 Day'], [3, ''], [3, '']]}
+                    dataSource={[[1, '1 Day'], [2, '2 Day'], [3, '3 Day'], [4, '4 Day'], [5, '5 Day']]}
                     renderItem={(data, idx) => (
                         <Text key={idx} style={{fontSize: 28, marginHorizontal: 50,}}>{data[1]}</Text>
                     )}
@@ -227,16 +202,9 @@ const DurationSheet = ({selectedDuration, setSelectedDuration, confirmHandler, r
     )
 }
 
-const ConfirmationSheet = ({
-                               selectedLocation,
-                               selectedDate,
-                               selectedTime,
-                               selectedDuration,
-                               selectedDriverType,
-                               confirmHandler,
-                               route,
-                               vehicleData
-                           }) => {
+const ConfirmationSheet = ({selectedLocation,selectedDate,selectedTime,selectedDuration,selectedDriverType,confirmHandler,route,vehicleData}) => {
+  // console.log(vehicleData.vehicleImage);
+
     return (
         <>
             <View style={{
@@ -260,7 +228,7 @@ const ConfirmationSheet = ({
                         flex: 1,
                         justifyContent: 'center'
                     }}>
-                        <Image source={route.params.type === 'Car' ? CarImage : MotorcycleImage}
+                        <Image source={{uri:`data:image/png;base64,${vehicleData.vehicleImage}`} }
                                style={{resizeMode: 'contain', height: '100%', width: '100%'}}/>
                     </View>
 
@@ -431,79 +399,78 @@ const ConfirmationSheet = ({
 
 const DriverTypeSheet = ({selectedDriverType, setSelectedDriverType, confirmHandler, route}) => {
     return (
-        <>
-            <View style={{flex: 1}}>
-                <Text style={{
-                    fontWeight: 'bold',
-                    fontSize: 22,
-                    marginTop: 25,
-                    marginLeft: 15,
-                    color: 'black',
-                }}>Choose Driver Type</Text>
+      route.params.type === 'Car' ?
+        <View style={{flex: 1}}>
+            <Text style={{
+                fontWeight: 'bold',
+                fontSize: 22,
+                marginTop: 25,
+                marginLeft: 15,
+                color: 'black',
+            }}>Choose Driver Type</Text>
 
-                <ScrollView>
-                    <TouchableOpacity
-                        style={{
-                            flexDirection: 'row',
-                            paddingRight: 25,
-                            paddingLeft: 15,
-                            backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                            margin: 10,
-                            paddingVertical: 15,
-                            borderRadius: 20,
-                        }}
-                        onPress={() => setSelectedDriverType(0)}
-                    >
-                        <Text style={{
-                            color: 'black', fontSize: 18, flex: 1
-                        }}>
-                            Without Driver
-                        </Text>
-                        <Text style={{
-                            color: 'rgba(0, 0, 0, 0.5)', fontSize: 18
-                        }}>
-                            {selectedDriverType === 0 ? "Selected" : ""}
-                        </Text>
-                    </TouchableOpacity>
+            <ScrollView>
+                <TouchableOpacity
+                    style={{
+                        flexDirection: 'row',
+                        paddingRight: 25,
+                        paddingLeft: 15,
+                        backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                        margin: 10,
+                        paddingVertical: 15,
+                        borderRadius: 20,
+                    }}
+                    onPress={() => setSelectedDriverType(0)}
+                >
+                    <Text style={{
+                        color: 'black', fontSize: 18, flex: 1
+                    }}>
+                        Without Driver
+                    </Text>
+                    <Text style={{
+                        color: 'rgba(0, 0, 0, 0.5)', fontSize: 18
+                    }}>
+                        {selectedDriverType === 0 ? "Selected" : ""}
+                    </Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={{
-                            flexDirection: 'row',
-                            paddingRight: 25,
-                            paddingLeft: 15,
-                            backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                            margin: 10,
-                            paddingVertical: 15,
-                            borderRadius: 20,
-                        }}
-                        onPress={() => setSelectedDriverType(1)}
-                    >
-                        <Text style={{
-                            color: 'black', fontSize: 18, flex: 1
-                        }}>
-                            With Driver
-                        </Text>
-                        <Text style={{
-                            color: 'rgba(0, 0, 0, 0.5)', fontSize: 18
-                        }}>
-                            {selectedDriverType === 1 ? "Selected" : ""}
-                        </Text>
-                    </TouchableOpacity>
-                </ScrollView>
+                <TouchableOpacity
+                    style={{
+                        flexDirection: 'row',
+                        paddingRight: 25,
+                        paddingLeft: 15,
+                        backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                        margin: 10,
+                        paddingVertical: 15,
+                        borderRadius: 20,
+                    }}
+                    onPress={() => setSelectedDriverType(1)}
+                >
+                    <Text style={{
+                        color: 'black', fontSize: 18, flex: 1
+                    }}>
+                        With Driver
+                    </Text>
+                    <Text style={{
+                        color: 'rgba(0, 0, 0, 0.5)', fontSize: 18
+                    }}>
+                        {selectedDriverType === 1 ? "Selected" : ""}
+                    </Text>
+                </TouchableOpacity>
+            </ScrollView>
 
-                <View style={{alignItems: 'center'}}>
-                    <Button onPress={confirmHandler} bgColor={route.params.type === 'Car' ? '#2AC6D0' : '#EC3476'}>
-                        <Text style={{
-                            padding: 10,
-                            color: 'white',
-                            paddingHorizontal: 50,
-                            fontSize: 18,
-                            fontWeight: 'bold'
-                        }}>Confirm</Text>
-                    </Button>
-                </View>
+            <View style={{alignItems: 'center'}}>
+                <Button onPress={confirmHandler} bgColor={route.params.type === 'Car' ? '#2AC6D0' : '#EC3476'}>
+                    <Text style={{
+                        padding: 10,
+                        color: 'white',
+                        paddingHorizontal: 50,
+                        fontSize: 18,
+                        fontWeight: 'bold'
+                    }}>Confirm</Text>
+                </Button>
             </View>
-        </>
+        </View> : null
     )
 }
 
@@ -530,9 +497,9 @@ const VehicleDetail = ({navigation, route}) => {
     const [bottomSheetContent, setBottomSheetContent] = React.useState('')
 
     const [vehicleData, setVehicleData] = React.useState({})
-
+    // console.log(vehicleData.vehicleImage)
     const triggerBottomSheet = (content) => setBottomSheetContent(content)
-
+    // console.log(vehicleData.vehicleImage);
     useEffect(() => {
         // console.log(bottomSheetRef?.current)
         // console.log(bottomSheetContent)
@@ -575,7 +542,6 @@ const VehicleDetail = ({navigation, route}) => {
 
     useEffect(() => {
         setSelectedLocation(globalsDataContext?.globalsData?.selectedPickUpLocation)
-        console.log(globalsDataContext?.globalsData?.selectedPickUpLocation)
     }, [globalsDataContext?.globalsData?.selectedPickUpLocation])
 
     return (
@@ -610,12 +576,13 @@ const VehicleDetail = ({navigation, route}) => {
                     borderTopRightRadius: 50, /*height: route.params.type === 'Car' ? 475 : 488.75*/
                 }}>
                     <Image
-                        source={route.params.type === 'Car' ? CarImage : MotorcycleImage}
+                        source={{uri:`data:image/png;base64,${vehicleData.vehicleImage}`}}
                         style={{
                             marginTop: -70,
                             alignSelf: 'center',
-                            width: route.params.type === 'Car' ? 400 : 300,
-                            resizeMode: 'contain'
+                            width: 300,
+                            height:300,
+                            resizeMode: 'contain',
                         }}
                     />
 
@@ -736,7 +703,7 @@ const VehicleDetail = ({navigation, route}) => {
 
                     <View style={{height: 1, backgroundColor: 'black'}}></View>
 
-                    <View style={{
+                    {route.params.type === 'Car' ? <View style={{
                         borderRadius: 15,
                         marginHorizontal: 25,
                         marginVertical: 15,
@@ -765,7 +732,7 @@ const VehicleDetail = ({navigation, route}) => {
                                        style={{transform: [{rotate: '-90deg'}], width: 10, resizeMode: 'contain'}}/>
                             </View>
                         </TouchableOpacity>
-                    </View>
+                    </View> : null }
 
                     <View style={{height: 1, backgroundColor: 'black'}}></View>
 

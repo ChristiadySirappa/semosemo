@@ -1,11 +1,9 @@
 /* eslint-disable */
+import React,{useEffect,useState,useContext} from 'react'
 import {View, Text, TouchableOpacity, Image} from 'react-native'
-import React from 'react'
 import {ScrollView} from 'react-native-gesture-handler'
 import {getDatabase, ref, get, child, remove, update} from 'firebase/database'
 import app from '../../config'
-import CarImage from '../../assets/CarImage.png'
-import MotorcycleImage from '../../assets/MotorcycleImage.png'
 import moment from 'moment'
 import BackendDataContext from '../../contexts/backendDataContext'
 
@@ -13,9 +11,9 @@ const db = getDatabase(app)
 const dbRef = ref(db)
 
 const OrderCard = ({el}) => {
-    const [vehicleData, setVehicleData] = React.useState(null)
-
-    React.useEffect(() => {
+    const [vehicleData, setVehicleData] = useState(null)
+    // console.log(vehicleData.vehicleImage);
+    useEffect(() => {
         get(child(dbRef, 'vehicles/' + el.vehicleId))
             .then(snapshot => {
                 if (!snapshot.exists()) return
@@ -31,9 +29,19 @@ const OrderCard = ({el}) => {
             elevation: 16,
             overflow: 'hidden',
             margin: 25,
+            alignItems:'center'
         }}>
             <Text style={{fontWeight: 'bold', textAlign: 'center', marginVertical: 10}}>{vehicleData?.name}</Text>
-
+            <Image
+                  source={{uri:`data:image/png;base64,${vehicleData?.vehicleImage}`}}
+                  style={{
+                      width: 300,
+                      height: 200,
+                      borderRadius:20,
+                      resizeMode: 'contain',
+                      marginBottom:20
+                  }}
+              />
             <View style={{
                 flexDirection: 'row',
                 flex: 1,
@@ -63,7 +71,7 @@ const OrderCard = ({el}) => {
                             {name: 'Driver Type', value: el?.driverType === 0 ? 'Without Driver' : 'With Driver'},
                             {name: 'Plate Number', value: vehicleData?.plateNumber},
                         ].map((string, idx) =>
-                            <View style={{
+                            <View key={idx} style={{
                                 flexDirection: 'row',
                                 marginBottom: 10,
                             }}>
@@ -87,27 +95,17 @@ const OrderCard = ({el}) => {
                     flex: 1,
                     // backgroundColor: 'cyan'
                 }}>
-                    <Image
-                        source={vehicleData?.type === 'Car' ? CarImage : MotorcycleImage}
-                        style={{
-                            flex: 1,
-                            width: null,
-                            height: null,
-                            resizeMode: 'contain',
-                            display: vehicleData?.type ? null : 'none',
-                        }}
-                    />
-                </View>
 
+                </View>
             </View>
         </TouchableOpacity>
     )
 }
 
 const OrderPage = () => {
-    const backendDataContext = React.useContext(BackendDataContext)
-    const [activeTab, setActiveTab] = React.useState(0)
-    const [ordersList, setOrdersList] = React.useState([])
+    const backendDataContext = useContext(BackendDataContext)
+    const [activeTab, setActiveTab] = useState(0)
+    const [ordersList, setOrdersList] = useState([])
 
     const getOrders = async () => {
         try {
@@ -131,13 +129,9 @@ const OrderPage = () => {
         }
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         getOrders()
     }, [activeTab])
-
-    React.useEffect(() => {
-        console.log(ordersList)
-    }, [ordersList])
 
     return (
         <>

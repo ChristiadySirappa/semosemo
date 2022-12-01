@@ -1,7 +1,8 @@
 /* eslint-disable */
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
+import React, {useState,useRef,useContext,useEffect} from 'react'
+import { View, Text, ScrollView, TouchableOpacity, Image,Linking } from 'react-native'
 import PersonIcon from '../../assets/PersonIcon.png'
+import Call from '../../assets/call.png'
 import MapNeedleIcon from '../../assets/MapNeedleIcon.png'
 import CalendarIcon from '../../assets/CalendarIcon.png'
 import TimeIcon from '../../assets/TimeIcon.png'
@@ -16,32 +17,34 @@ import {ScrollView as ScrollViewRNGH} from 'react-native-gesture-handler'
 import { getDatabase, ref, child, get, update, remove } from 'firebase/database'
 import app from '../../config'
 import moment from 'moment'
+import BackendDataContext from '../../contexts/backendDataContext'
 
 const db = getDatabase(app)
 const dbRef = ref(db)
 
-const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBookingHandler, declineBookingHandler, completeBookingHandler, setBottomSheetVisible}) => {
-    const scrollView = React.useRef(null)
-    const [vehicleData, setVehicleData] = React.useState(null)
-    const [imageData, setImageData] = React.useState('')
+const VehicleDetailSheet = ({navigation,route, selectedOrder, setSelectedOrder, acceptBookingHandler, declineBookingHandler, completeBookingHandler, setBottomSheetVisible}) => {
+    const scrollView = useRef(null)
+    const [vehicleData, setVehicleData] = useState(null)
+    const [imageData, setImageData] = useState('')
+    const backendDataContext = useContext(BackendDataContext)
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (selectedOrder) {
             console.log(selectedOrder)
             scrollView.current.scrollTo({x: 0, y: 0, animated: true})
 
             get(child(dbRef, 'vehicles/' + selectedOrder.vehicleId))
                 .then(snapshot => {
-                    if (!snapshot.exists()) return null
+                    if (!snapshot.exists()) return false
 
                     const data = snapshot.val()
-
+                    // console.log(data);
                     setVehicleData(data)
                 })
 
             get(child(dbRef, 'ktpImage/' + selectedOrder?.ktpImageId))
                 .then(snapshot => {
-                    if (!snapshot.exists()) return null
+                    if (!snapshot.exists()) return false
 
                     const data = snapshot.val()
 
@@ -49,6 +52,8 @@ const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBooki
                 })
         }
     }, [selectedOrder])
+
+    // console.log('sadfsd',vehicleData);
 
     return (
     <>
@@ -70,10 +75,9 @@ const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBooki
             }}>
                 <View style={{
                     // backgroundColor: 'yellow',
-                    flex: 1,
                     justifyContent: 'center'
                 }}>
-                    <Image source={vehicleData?.type === 'Car' ? CarImage : MotorcycleImage} style={{resizeMode: 'contain', height: '100%', width: '100%'}}/>
+                    <Image source={{uri:`data:image/png;base64,${vehicleData?.vehicleImage}`}} style={{resizeMode: 'contain', height: 130, width: 130,marginRight:10}}/>
                 </View>
 
                 <View style={{
@@ -82,10 +86,9 @@ const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBooki
                 }}>
                     <Text style={{color: 'black', fontWeight: 'bold', fontSize: 22}}>{vehicleData?.name}</Text>
                     <Text style={{color: 'black', fontSize: 16}}>{vehicleData?.driverType === 0 ? "Without Driver" : "With Driver"}</Text>
-
                     <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
                         <Image source={MapNeedleIcon} style={{resizeMode: 'contain', width: 25, marginRight: 5}}/>
-                        <Text style={{fontSize: 16}}>
+                      <Text style={{fontSize: 16}}>
                             {selectedOrder?.location.length > 19 ? selectedOrder?.location.substring(0, 19) + '...' : selectedOrder?.location}
                         </Text>
                     </View>
@@ -109,6 +112,14 @@ const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBooki
                     </View>
                 </View>
             </View>
+            <TouchableOpacity style={{marginVertical:20,flexDirection:'row',alignItems:'center',borderStyle:'solid'}} onPress={()=>Linking.openURL(`tel:${vehicleData.rentalInfo.nomorTelepon}`)}>
+              <Image source={Call} style={{width: 20, height: 20, marginRight: 10, tintColor: 'rgb(80, 80, 80)'}} />
+            <Text style={{color:"#000"}}>{vehicleData?.rentalInfo?.nomorTelepon}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{marginVertical:20,flexDirection:'row',alignItems:'center',borderStyle:'solid'}} onPress={()=>navigation.navigate('LocationSelect', {locate: selectedOrder?.location})}>
+              <Image source={MapNeedleIcon} style={{width: 20, height: 20, marginRight: 10, tintColor: 'rgb(80, 80, 80)'}} />
+            <Text style={{color:"#000"}}>{selectedOrder?.location}</Text>
+            </TouchableOpacity>
 
             <View style={{
                 backgroundColor: '#3a21d4',
@@ -156,7 +167,7 @@ const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBooki
                 <>
                     <Text style={{fontSize: FONT_SIZE, color: 'black'}}>
                         {/* Vehicle Name */}
-                        {vehicleData?.name}
+                        {vehicleData?.name} {vehicleData?.plateNumber}
                     </Text>
 
                     <View style={{flexDirection: 'row'}}>
@@ -214,7 +225,7 @@ const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBooki
                     borderColor: 'white',
                     overflow: 'hidden'
                 }}>
-                    <Image source={{uri: imageData}} style={{flex: 1, resizeMode: 'contain', width: null}}/>
+                    <Image source={{uri: imageData!==null||[] ? imageData : ''}} style={{flex: 1, resizeMode: 'contain', width: null}}/>
                 </View>
             </View>
 
@@ -258,13 +269,19 @@ const VehicleDetailSheet = ({route, selectedOrder, setSelectedOrder, acceptBooki
 const OrderCard = ({el, setSelectedOrder}) => {
     const [vehicleName, setVehicleName] = React.useState('Vehicle Name')
     const [vehicleType, setVehicleType] = React.useState('Car')
+    const backendDataContext = useContext(BackendDataContext)
+
+    // console.log("blablabla",backendDataContext);
 
     React.useEffect(() => {
         get(child(dbRef, 'vehicles/' + el.vehicleId)).then(snapshot => {
-            if (!snapshot.exists()) return null
+            if (!snapshot.exists()) return false
 
             const data = snapshot.val()
-
+            // console.log(backendDataContext.backendData.fullName);
+            if (data.rentalInfo.fullName!== backendDataContext.backendData.fullName) {
+              return false
+            }
             setVehicleName(data.name)
             setVehicleType(data.type)
         })
@@ -301,26 +318,33 @@ const OrderCard = ({el, setSelectedOrder}) => {
             {
                 [
                     {
-                    icon: PersonIcon,
-                    value: el?.fullName
+                      icon: PersonIcon,
+                      value: el?.fullName
                     },
                     {
-                    icon: MapNeedleIcon,
-                    value: el?.location
+                      icon: MapNeedleIcon,
+                      value: el?.location
                     },
                     {
-                    icon: CalendarIcon,
-                    value: moment(el?.dateAndTime)?.format('DD MMM YYYY')
+                      icon: CalendarIcon,
+                      value: moment(el?.dateAndTime)?.format('DD MMM YYYY')
                     },
                     {
-                    icon: TimeIcon,
-                    value: moment(el?.dateAndTime)?.format('HH:mm')
+                      icon: TimeIcon,
+                      value: moment(el?.dateAndTime)?.format('HH:mm')
                     },
                     {
-                    icon: DurationIcon,
-                    value: `${el?.duration} Day${el?.duration > 1 ? 's' : ''}`
-                    }
-                ].map((el, idx) => (
+                      icon: DurationIcon,
+                      value: `${el?.duration} Day${el?.duration > 1 ? 's' : ''}`
+                    },
+                    {
+                      icon: Call,
+                      value: el?.phoneNumber,
+                      label:"phoneNumber"
+                    },
+
+                ].map((item, idx) => (
+
                     <View
                         key={idx}
                         style={{
@@ -329,14 +353,16 @@ const OrderCard = ({el, setSelectedOrder}) => {
                             marginVertical: 5,
                         }}
                     >
-                        <Image source={el.icon} style={{width: 20, height: 20, marginRight: 10, tintColor: 'rgb(80, 80, 80)'}} />
-                        <Text style={{color: 'black'}}>{el.value}</Text>
+                        <Image source={item.icon} style={{width: 20, height: 20, marginRight: 10, tintColor: 'rgb(80, 80, 80)'}} />
+                      {item.label === "phoneNumber" ? <TouchableOpacity onPress={()=>Linking.openURL(`tel:${item.value}`)}>
+                        <Text style={{color: 'black'}}>Call</Text>
+                      </TouchableOpacity> : <Text style={{color: 'black'}}>{item.value}</Text>}
                     </View>
                 ))
             }
             </View>
             <View style={{flex: 1}}>
-                <Image source={vehicleType === 'Car' ? CarImage : MotorcycleImage} style={{flex: 1, width: null, resizeMode: 'contain'}}/>
+                <Image source={{uri:`data:image/png;base64,${el.image}`}} style={{flex: 1, width: null, resizeMode: 'contain'}}/>
             </View>
         </View>
     </TouchableOpacity>
@@ -348,6 +374,7 @@ const AdminHomePage = ({navigation, route}) => {
     const [bottomSheetVisible, setBottomSheetVisible] = React.useState(false)
     const [ordersList, setOrdersList] = React.useState([])
     const [selectedOrder, setSelectedOrder] = React.useState(null)
+    const backendDataContext = useContext(BackendDataContext)
 
     React.useEffect(() => {
         if(bottomSheetVisible) bottomSheetRef?.current?.expand()
@@ -384,18 +411,6 @@ const AdminHomePage = ({navigation, route}) => {
     React.useEffect(() => {
         fetchData()
     }, [])
-
-    // React.useEffect(() => {
-    //     const unsubscribe = navigation.addListener('focus', () => {
-    //         console.log(ordersList)
-    //     })
-
-    //     return unsubscribe
-    // }, [navigation])
-
-    // React.useEffect(() => {
-    //     console.log(ordersList)
-    // }, [ordersList])
 
     const acceptBookingHandler = () => {
         if(!selectedOrder) return
@@ -474,7 +489,8 @@ const AdminHomePage = ({navigation, route}) => {
 
         {
             ordersList.map((el, idx) => (
-                <OrderCard {...{el, key: el.id, setSelectedOrder}}/>
+              el.rentalId == backendDataContext.backendData.id ?
+              <OrderCard {...{el, key: el.id, setSelectedOrder}}/> : null
             ))
         }
         <View style={{height: 50}}></View>
@@ -500,7 +516,7 @@ const AdminHomePage = ({navigation, route}) => {
         enableHandlePanningGesture={false}
         handleComponent={() => <View></View>}
     >
-        <VehicleDetailSheet {...{route, selectedOrder, setSelectedOrder, acceptBookingHandler, declineBookingHandler, completeBookingHandler, setBottomSheetVisible}}/>
+        <VehicleDetailSheet {...{navigation,route, selectedOrder, setSelectedOrder, acceptBookingHandler, declineBookingHandler, completeBookingHandler, setBottomSheetVisible}}/>
     </BottomSheet>
     </>
   )

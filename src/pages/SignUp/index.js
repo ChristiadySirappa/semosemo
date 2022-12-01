@@ -67,12 +67,12 @@ const styles = StyleSheet.create({
 const SignUp = ({navigation}) => {
     const bottomSheetRef = React.useRef(null)
     const snapPoints = React.useMemo(() => ['50%'], [])
-    const [datePickerSheetVisible, setDatePickerSheetVisible] = React.useState(-1)
-    const [namaLengkap, setNamaLengkap] = React.useState('')
-    const [tanggalLahir, setTanggalLahir] = React.useState('')
-    const [nomorTelepon, setNomorTelepon] = React.useState('')
-    const [email, setEmail] = React.useState('')
-    const [password, setPassword] = React.useState('')
+    const [datePickerSheetVisible, setDatePickerSheetVisible] = useState(-1)
+    const [namaLengkap, setNamaLengkap] = useState('')
+    const [tanggalLahir, setTanggalLahir] = useState('')
+    const [nomorTelepon, setNomorTelepon] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const [photo,setPhoto] = useState('')
     const [hasPhoto, setHasPhoto] = useState(false)
     const [photoBase64,setPhotoBase64] = useState('')
@@ -258,7 +258,7 @@ const SignUp = ({navigation}) => {
             </View>
             <View style={[styles.loginBtn,{marginTop:30}]}>
                 <Button bgColor='#DD8A00' onPress={()=>navigation.navigate('SignUpAdmin')}>
-                    <Text style={[styles.buttonText, {color: '#fff'}]}>Register as Admin</Text>
+                    <Text style={[styles.buttonText, {color: '#fff'}]}>Register as Rental</Text>
                 </Button>
             </View>
         </ScrollView>

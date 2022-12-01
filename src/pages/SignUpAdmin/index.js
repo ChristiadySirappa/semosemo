@@ -1,5 +1,5 @@
+import React,{useState} from 'react'
 import { View, Text, StyleSheet, Image, StatusBar, ScrollView, TouchableOpacity } from 'react-native'
-import React from 'react'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
 import BottomSheet from '@gorhom/bottom-sheet'
@@ -67,12 +67,12 @@ const styles = StyleSheet.create({
 const SignUpAdmin = ({navigation}) => {
     const bottomSheetRef = React.useRef(null)
     const snapPoints = React.useMemo(() => ['50%'], [])
-    const [datePickerSheetVisible, setDatePickerSheetVisible] = React.useState(-1)
-    const [namaLengkap, setNamaLengkap] = React.useState('')
-    const [tanggalLahir, setTanggalLahir] = React.useState('')
-    const [nomorTelepon, setNomorTelepon] = React.useState('')
-    const [email, setEmail] = React.useState('')
-    const [password, setPassword] = React.useState('')
+    const [datePickerSheetVisible, setDatePickerSheetVisible] = useState(-1)
+    const [namaLengkap, setNamaLengkap] = useState('')
+    const [tanggalLahir, setTanggalLahir] = useState('')
+    const [nomorTelepon, setNomorTelepon] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const [photo,setPhoto] = useState('')
     const [hasPhoto, setHasPhoto] = useState(false)
     const [photoBase64,setPhotoBase64] = useState('')
@@ -190,7 +190,7 @@ const SignUpAdmin = ({navigation}) => {
                 <TouchableOpacity onPress={() => navigation.pop()} activeOpacity={0.8}>
                     <Image source={require('../../assets/ArrowLeft.png')}/>
                 </TouchableOpacity>
-                <Text style={{fontSize: 32, color: 'white',marginLeft:10}}>Registration Admin</Text>
+                <Text style={{fontSize: 32, color: 'white',marginLeft:10}}>Registration Rental</Text>
             </View>
             <TouchableOpacity style={{marginTop:30}} onPress={imageGallery} activeOpacity={0.5}>
               {!hasPhoto && (

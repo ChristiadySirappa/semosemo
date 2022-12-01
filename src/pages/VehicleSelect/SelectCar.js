@@ -4,8 +4,6 @@ import React from 'react'
 import ArrowLeft from '../../assets/ArrowLeft.png'
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler'
 import {getDatabase, ref, get, child} from 'firebase/database'
-import CarImage from '../../assets/CarImage.png'
-import MotorcycleImage from '../../assets/MotorcycleImage.png'
 import app from '../../config'
 
 const db = getDatabase(app)
@@ -52,10 +50,6 @@ const SelectCar = ({navigation}) => {
     }, [])
 
     React.useEffect(() => {
-        console.log(vehiclesList)
-    }, [])
-
-    React.useEffect(() => {
         debounce(() =>
             setProxyVehiclesList(vehiclesList.filter(e => searchTextbox.length > 0 ? e?.name?.toLowerCase().includes(searchTextbox?.toLowerCase()) : true))
         )()
@@ -67,7 +61,7 @@ const SelectCar = ({navigation}) => {
             height: '100%',
             backgroundColor: '#2AC6D0',
             justifyContent: 'center',
-            aligmItems: 'center',
+            alignItems: 'center',
         }}>
             <StatusBar translucent barStyle='dark-content'/>
             <Text style={{textAlign: 'center', fontSize: 18, marginTop: 35, color: 'white'}}>SEMO SEMO</Text>
@@ -89,8 +83,8 @@ const SelectCar = ({navigation}) => {
             <Text style={{textAlign: 'center', fontSize: 24, marginVertical: 50, color: 'white'}}>Find your perfect
                 car!</Text>
 
-            <ScrollView style={{backgroundColor: 'white', borderTopLeftRadius: 25, borderTopRightRadius: 25}}>
-                <View style={{height: 25,}}></View>
+              <ScrollView style={{backgroundColor: 'white', borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
+                <View style={{height: 25,width:380}}></View>
                 {proxyVehiclesList.map(el => (
                     <TouchableOpacity
                         key={el.id}
@@ -99,15 +93,23 @@ const SelectCar = ({navigation}) => {
                             marginVertical: 15,
                             backgroundColor: '#2AC6D0',
                             padding: 15,
-                            borderRadius: 25,
-                            height: 150,
+                            borderRadius: 15,
+                            height: 180,
                             alignItems: 'center',
+                            justifyContent:'space-between',
                             flexDirection: 'row',
                         }}
                         onPress={() => navigation.navigate('VehicleDetail', {selectedId: el.id, type: el.type})}
                     >
-                        <Text style={{color: 'white', fontSize: 28, fontWeight: 'bold', flex: 1}}>{el.name}</Text>
-                        <Image source={CarImage} style={{resizeMode: 'contain', width: 150,}}/>
+                        <View>
+                          <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold', flex: 1}}>{el?.merek}</Text>
+                          <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold', flex: 1}}>{el.name}</Text>
+                          <Text style={{color: 'white', fontSize: 14, fontWeight: 'bold', flex: 1}}>Tahun {el?.year}</Text>
+                          <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold', flex: 1}}>{el.power} CC</Text>
+                          <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold', flex: 1}}>{el.rentalInfo?.fullName}</Text>
+                          <Text style={{color: 'white', fontSize: 14, fontWeight: 'bold', flex: 1}}>Harga {el?.rentPrice}</Text>
+                        </View>
+                        <Image source={{uri:`data:image/png;base64,${el.vehicleImage}`}} style={{resizeMode: 'contain', width: 100,height:100,borderRadius: 20}}/>
                     </TouchableOpacity>
                 ))}
             </ScrollView>

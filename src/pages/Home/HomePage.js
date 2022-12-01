@@ -11,8 +11,6 @@ import BackendDataContext from '../../contexts/backendDataContext';
 const HomePage = ({navigation}) => {
   const backendDataContext = React.useContext(BackendDataContext);
 
-  console.log(backendDataContext.backendData);
-
   return (
     <>
       <View
@@ -122,21 +120,6 @@ const HomePage = ({navigation}) => {
             Tip : Make sure to double check your order!
           </Text>
         </View>
-        {/* {[...Array(20)].map((el, idx) => (
-        <View
-        key={idx}
-        style={{
-        marginHorizontal: 20,
-        marginVertical: 15,
-        backgroundColor: 'white',
-        padding: 15,
-        borderRadius: 25,
-        elevation: 8
-        }}
-        >
-        <Text>test content {el}</Text>
-        </View>
-        ))} */}
 
         <ImageBackground
           source={ManadoBridge}

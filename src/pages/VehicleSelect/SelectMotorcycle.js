@@ -51,10 +51,6 @@ const SelectMotorcycle = ({navigation}) => {
     }, [])
 
     React.useEffect(() => {
-        console.log(vehiclesList)
-    }, [])
-
-    React.useEffect(() => {
         debounce(() =>
             setProxyVehiclesList(vehiclesList.filter(e => searchTextbox.length > 0 ? e?.name?.toLowerCase().includes(searchTextbox?.toLowerCase()) : true))
         )()
@@ -101,12 +97,20 @@ const SelectMotorcycle = ({navigation}) => {
                             borderRadius: 25,
                             height: 150,
                             alignItems: 'center',
+                            justifyContent:'space-between',
                             flexDirection: 'row',
                         }}
                         onPress={() => navigation.navigate('VehicleDetail', {selectedId: el.id, type: el.type})}
                     >
-                        <Text style={{color: 'white', fontSize: 28, fontWeight: 'bold', flex: 1}}>{el.name}</Text>
-                        <Image source={MotorcycleImage} style={{resizeMode: 'contain', width: 150,}}/>
+                    <View>
+                      <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold', flex: 1}}>{el?.merek}</Text>
+                      <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold', flex: 1}}>{el.name}</Text>
+                      <Text style={{color: 'white', fontSize: 14, fontWeight: 'bold', flex: 1}}>Tahun {el?.year}</Text>
+                      <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold', flex: 1}}>{el.engineCC} CC</Text>
+                      <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold', flex: 1}}>{el.rentalInfo?.fullName}</Text>
+                      <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold', flex: 1}}>{el?.rentPrice}</Text>
+                    </View>
+                    <Image source={{uri:`data:image/png;base64,${el.vehicleImage}`}} style={{resizeMode: 'contain', width: 100,height:100,borderRadius: 20}}/>
                     </TouchableOpacity>
                 ))}
             </ScrollView>

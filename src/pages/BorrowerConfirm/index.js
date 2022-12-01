@@ -24,6 +24,7 @@ const BorrowerConfirm = ({navigation, route}) => {
     const [ktpNumber, setKtpNumber] = React.useState('')
     const [bookNowPressed, setBookNowPressed] = React.useState(false)
     // console.log(route?.params?.selectedDateAndTime)
+    // console.log(route.params.user);
 
     return (
         <View
@@ -110,11 +111,11 @@ const BorrowerConfirm = ({navigation, route}) => {
 
                     <Text>ID Card Number (KTP)</Text>
                     <TextInput
-                        placeholder={'710xxxxxxxxxxxxxx'}
+                        placeholder='710xxxxxxxxxxxxxx'
                         value={ktpNumber}
                         setValue={setKtpNumber}
                         //only accept numeric character and length must be at least 1
-                        validation={value => value.length > 0 && /^[0-9]*$/.test(value)}
+                        validation={value => value.length > 0 && value.length == 16 && /^[0-9]*$/.test(value)}
                     />
 
                     <View style={{height: 25}}/>
@@ -180,6 +181,9 @@ const BorrowerConfirm = ({navigation, route}) => {
                         dateAndTime: route?.params?.selectedDateAndTime.toISOString(),
                         duration: route?.params?.selectedDuration,
                         status: 'unapproved',
+                        image:route?.params?.vehicle?.vehicleImage,
+                        plate:route?.params?.vehicle.plateNumber,
+                        rentalId: route?.params?.vehicle?.rentalInfo.id
                     })
 
                     navigation.dispatch(state => {
